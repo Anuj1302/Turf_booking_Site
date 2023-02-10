@@ -7,8 +7,12 @@ const session = require('express-session');
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const findOrCreate = require('mongoose-findorcreate');
+const nodemailer = require("nodemailer");
+// const sendMail = require("./controllers/sendMail");
 
-const app  = express()
+// const transporter = nodemailer.createTransport(transport[, defaults]);
+
+const app  = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static("public"));
@@ -18,6 +22,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -29,6 +34,14 @@ const Registeration = new mongoose.Schema({
   name:String,
   city:String,
   googleId:String
+});
+
+const Contacts = new mongoose.Schema({
+  firstname:String,
+  lastname:String,
+  email:String,
+  mobile_no:String,
+  message:String
 });
 
 
@@ -45,6 +58,7 @@ Registeration.plugin(findOrCreate);
 
 const Registers = mongoose.model("Register",Registeration);
 const Booking = mongoose.model("Booking",bookingSchema);
+const Contact = mongoose.model("Contact",Contacts);
 
 
 passport.use(Registers.createStrategy());
@@ -79,6 +93,8 @@ app.get("/",function(req,res){
     res.sendFile(__dirname+"/Registeration.html");
 });
 
+// app.get("/mail",sendMail);
+
 app.get("/auth/google",
   passport.authenticate('google', { scope: ["profile"] })
 );
@@ -97,7 +113,6 @@ app.post("/",function(req,res){
   //   name:req.body.name,
   //   city:req.body.city
   // });
-
 
     Registers.register({username: req.body.username, name:req.body.name,city:req.body.city}, req.body.password, function(err, user){
     if (err) {
@@ -135,9 +150,6 @@ app.post("/SignIn.html", function(req, res){
   });
 });
 
-
-
-
 app.get("/dicee.html",function(req,res){
     res.sendFile(__dirname+"/dicee.html");
 })
@@ -146,6 +158,9 @@ app.get("/explore.html",function(req,res){
     res.sendFile(__dirname+"/explore.html");
 })
 
+app.get("/contact.html",function(req,res){
+  res.sendFile(__dirname+"/contact.html");
+})
 
 app.listen(3000,function(){
     console.log("Server is running on port 3000");
@@ -257,6 +272,34 @@ app.post("/book_now",function(req,res){
     var email = req.body.email;
     var phone = req.body.phone;
 
+    // arr object for generating ticket
+
+    let transporter =  nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: "587",
+    secure:false,
+    auth: {
+        user: 'apj752003@gmail.com',
+        pass: 'lzwfmkgoeiquvroy'
+    }
+  });
+
+   let info =  transporter.sendMail({
+    from: "apj752003@gmail.com", // sender address
+    to: email, // list of receivers
+    subject: "Turf Booking Website Team", // Subject line
+    // This is for any other mail service
+    // text: "Hi! Your Booked turf is: "+turfName+"<br/>"+" Turf Location is: "+location+"<br/>"+" Check-in-date : "+check_in_date+"<br/>"+" Check-out-date : "+check_out_date+"<br/>"+" Timeslot :"+timeSlot+"<br/>"+ "Number of memebers are: "+members, // plain text body
+    // html: "<html><title>Ticket</title><body><h1>`${arr[0].turfName}`</h1></body></html>", // html body
+    // This is for the Gmail
+    text: "Hi! Your Booked turf is: "+turfName+"\n Turf Location is: "+location+"\n Check-in-date : "+check_in_date+"\n Check-out-date : "+check_out_date+"\n Timeslot :"+timeSlot+"\n Number of memebers are: "+members
+  });
+
+  console.log("Message sent is %s",info.messageId);
+  // res.json(info);
+
+    // module.exports = arr;
+
      const b2 = new Booking({
     turfName:turfName,
     location:location,
@@ -269,6 +312,45 @@ b2.save();
  res.redirect("/successful.html");
 })
 
+app.post("/contact.html",function(req,res){
+    var firstname = req.body.firstname;
+    var lastname = req.body.lastname;
+    var email = req.body.email;
+    var mobile = req.body.mobile;
+    var message = req.body.feedback;
+
+    let transporter =  nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: "587",
+    secure:false,
+    auth: {
+        user: 'apj752003@gmail.com',
+        pass: 'lzwfmkgoeiquvroy'
+    }
+  });
+
+   let info =  transporter.sendMail({
+    from: "apj752003@gmail.com", // sender address
+    to: email, // list of receivers
+    subject: "Turf Booking Website Team", // Subject line
+    html: "<b>Hi! Thanks for Contacting Us! Thank you for your feedback !!</b>", // html body
+  });
+
+  console.log("Message sent is %s",info.messageId);
+
+    const b5 = new Contact({
+    firstname:firstname,
+    lastname:lastname,
+    email:email,
+    mobile_no:mobile,
+    message:message
+});
+b5.save();
+
+res.redirect("/successful1.html")
+
+})
+
 // app.get("/book_now.ejs",function(req,res){
 //     res.render('book_now',{oneturf:array});
 // });
@@ -276,3 +358,8 @@ b2.save();
 app.get("/successful.html",function(req,res){
     res.sendFile(__dirname+"/successful.html");
 })
+app.get("/successful1.html",function(req,res){
+    res.sendFile(__dirname+"/successful1.html");
+})
+
+
