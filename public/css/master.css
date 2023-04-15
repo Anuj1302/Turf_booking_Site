@@ -9,7 +9,7 @@ body{
 }
 #title .container-fluid{
   padding: 3% 15% 7%;
-  background-color: lightgreen;
+  background-color: rgb(28, 152, 234);
   text-align: left;
 }
 .navbar-brand{
@@ -47,12 +47,12 @@ button{
 }
 
 .icon{
-  color: #7DCE13;
+  color: #090d04;
   margin: 0 0 2rem;
 }
 
 .icon:hover{
-  color:  #2B7A0B;
+  color:  rgb(93, 105, 93);
 }
 
 .feature-description{
@@ -60,14 +60,14 @@ button{
   line-height: 1.5;
   font-family: "Montserrat", sans-serif;
   font-weight: 900;
-  color: #7DCE13;
+  color: rgb(2, 4, 6);
 }
 
 /* Testinomials */
 
 .testinomials{
   padding: 7% 15%;
-  background-color: lightgreen;
+  background-color: rgb(28, 152, 234);
   color: white;
   text-align: center;
   font-family: "Montserrat", sans-serif;
@@ -83,7 +83,7 @@ button{
 /* Booking */
 
 .booking{
-  background-color: lightgreen;
+  background-color: rgb(28, 152, 234);
   text-align: center;
 }
 
@@ -95,10 +95,12 @@ button{
 
 /* About Us */
 .tm-footer{
+  background-color: rgb(227, 240, 244);
   padding: 7% 15%;
 }
 .about{
-  color: lightgreen;
+  
+  color: rgb(4, 70, 117);
   text-align: center;
   line-height: 1.5;
   font-family: "Montserrat", sans-serif;
@@ -109,7 +111,8 @@ button{
 }
 
 .about h3{
-  font-weight:500;
+  font-family: 'Roboto Slab', serif;
+  font-weight:550;
 }
 
 /* Footer Media */
@@ -117,7 +120,7 @@ button{
   padding:7% 15%;
   text-align: center;
   color: white;
-  background-color: green;
+  background-color: rgb(28, 152, 234);
 }
 .footer-icon{
   color: white;
